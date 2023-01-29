@@ -17,18 +17,6 @@ export default class SnakeChunk {
 
   static INITIAL_SIZE = 10
 
-  static createInitial () {
-    const canvas = document.querySelector('canvas')
-
-    return new SnakeChunk({
-      x: 0,
-      y: canvas.height - SnakeChunk.INITIAL_SIZE,
-      orientation: ORIENTATIONS.HORIZONTAL,
-      width: 120,
-      direction: DIRECTIONS.EAST
-    })
-  }
-
   move () {
     if (this.direction === DIRECTIONS.NORTH) this.y -= Snake.DISPLACEMENT
     if (this.direction === DIRECTIONS.SOUTH) this.y += Snake.DISPLACEMENT

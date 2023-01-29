@@ -4,7 +4,15 @@ import { DIRECTIONS, ORIENTATIONS } from './utils.js'
 
 export default class Snake {
   constructor () {
-    this.body = [SnakeChunk.createInitial()]
+    const canvas = document.querySelector('canvas')
+
+    this.body = [new SnakeChunk({
+      x: 0,
+      y: canvas.height - SnakeChunk.INITIAL_SIZE,
+      width: 200,
+      direction: DIRECTIONS.EAST
+    })]
+    this.collision = false
   }
 
   static STEP_SIZE = 15
