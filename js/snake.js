@@ -18,7 +18,7 @@ export default class Snake {
     })]
     this.direction = Snake.ACTION_DIRECTIONS.STRAIGHT
     this.relativeDisplacement = 0
-    this.stepSize = 15
+    this.stepSize = SnakeChunk.INITIAL_SIZE + 5
   }
 
   static ACTION_DIRECTIONS = {
