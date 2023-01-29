@@ -57,6 +57,11 @@ export default class SnakeChunk {
   }
 
   draw () {
-    Canvas.drawRectangule(this.x, this.y, this.width, this.height, this.color)
+    Canvas.drawRectangule({
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height
+    })
   }
 }

@@ -1,4 +1,3 @@
-import Canvas from './canvas.js'
 import SnakeChunk from './snakeChunk.js'
 import { DIRECTIONS, ORIENTATIONS } from './utils.js'
 
@@ -159,16 +158,11 @@ export default class Snake {
   }
 
   draw () {
-    this.body.forEach((snakeChunk) => Canvas.drawRectangule(
-      snakeChunk.x,
-      snakeChunk.y,
-      snakeChunk.width,
-      snakeChunk.height
-    ))
+    this.body.forEach((snakeChunk) => snakeChunk.draw())
   }
 
   setCollision () {
-    console.log('BOOM!!!')
+    window.alert('BOOM!!!')
     this.collision = true
   }
 
