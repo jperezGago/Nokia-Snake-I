@@ -16,10 +16,11 @@ export default class Snake {
       direction: DIRECTIONS.EAST,
       velocity
     })]
+    this.direction = Snake.ACTION_DIRECTIONS.STRAIGHT
+    this.relativeDisplacement = 0
+    this.stepSize = 15
   }
 
-  static STEP_SIZE = 15
-  static DISPLACEMENT = 0.5
   static ACTION_DIRECTIONS = {
     STRAIGHT: Symbol('STRAIGHT'),
     LEFT: Symbol('LEFT'),
@@ -93,13 +94,12 @@ export default class Snake {
     })
   }
 
-  move (direction) {
-    if (direction === Snake.ACTION_DIRECTIONS.STRAIGHT && this.body.length === 1) {
-      const [snakeHead] = this.body
-      snakeHead.move()
-      return
-    }
+  moveSingleChunkStraight () {
+    const [snakeHead] = this.body
+    snakeHead.move()
+  }
 
+  shrinkTailChunk () {
     const snakeTail = this.body[0]
 
     if (
@@ -114,15 +114,48 @@ export default class Snake {
     } else {
       snakeTail.shrink()
     }
+  }
 
-    if (direction === Snake.ACTION_DIRECTIONS.STRAIGHT) {
-      const snakeHead = this.body[this.body.length - 1]
-      snakeHead.expand()
+  expandHeadChunk () {
+    const snakeHead = this.body[this.body.length - 1]
+    snakeHead.expand()
+  }
+
+  moveStraight () {
+    this.shrinkTailChunk()
+    this.expandHeadChunk()
+  }
+
+  resetDirection () {
+    this.direction = Snake.ACTION_DIRECTIONS.STRAIGHT
+  }
+
+  turn () {
+    const newChunk = this.createChunk(this.direction)
+    this.body.push(newChunk)
+  }
+
+  resetRelativeDisplacement () {
+    this.relativeDisplacement = 0
+  }
+
+  incrementRelativeDisplacement () {
+    this.relativeDisplacement += this.velocity
+  }
+
+  move () {
+    if (this.direction === Snake.ACTION_DIRECTIONS.STRAIGHT && this.body.length === 1) {
+      this.moveSingleChunkStraight()
       return
     }
 
-    const newChunk = this.createChunk(direction)
-    this.body.push(newChunk)
+    if (this.relativeDisplacement >= this.stepSize && this.direction !== Snake.ACTION_DIRECTIONS.STRAIGHT) {
+      this.turn()
+      this.resetDirection()
+      return
+    }
+
+    this.moveStraight()
   }
 
   draw () {
@@ -164,7 +197,15 @@ export default class Snake {
     })
   }
 
-  update (direction) {
+  manageRelativeDisplacement () {
+    if (this.relativeDisplacement >= this.stepSize) {
+      this.resetRelativeDisplacement()
+    } else {
+      this.incrementRelativeDisplacement()
+    }
+  }
+
+  update () {
     this.draw()
 
     if (this.collision) {
@@ -172,6 +213,7 @@ export default class Snake {
     }
 
     this.checkCollision()
-    this.move(direction)
+    this.manageRelativeDisplacement()
+    this.move()
   }
 }
