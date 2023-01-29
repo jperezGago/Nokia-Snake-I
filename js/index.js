@@ -2,29 +2,30 @@ import Canvas from './canvas.js'
 import Snake from './snake.js'
 import { KEYS } from './utils.js'
 
-let displacement = 0
+let snakeDisplacement = 0
 let snakeActionDirection
 
-function animate () {
+function animate (snakeVelocity) {
   window.requestAnimationFrame(animate)
   Canvas.clearCanvas()
 
-  if (displacement >= Snake.STEP_SIZE && snakeActionDirection) {
+  if (snakeDisplacement >= Snake.STEP_SIZE && snakeActionDirection) {
     snake.update(snakeActionDirection)
-    displacement = 0
+    snakeDisplacement = 0
     snakeActionDirection = false
   }
 
-  if (displacement >= Snake.STEP_SIZE && !snakeActionDirection) {
-    displacement = 0
+  if (snakeDisplacement >= Snake.STEP_SIZE && !snakeActionDirection) {
+    snakeDisplacement = 0
   }
 
   snake.update(Snake.ACTION_DIRECTIONS.STRAIGHT)
-  displacement += Snake.DISPLACEMENT
+  snakeDisplacement += snakeVelocity
 }
 
 const snake = new Snake()
-animate()
+
+animate(snake.velocity)
 
 window.addEventListener('keydown', (event) => {
   if (event.keyCode === KEYS.LEFT) {
