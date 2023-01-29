@@ -8,6 +8,7 @@ export default class Snake {
     const velocity = 1
 
     this.velocity = velocity
+    this.collision = false
     this.body = [new SnakeChunk({
       x: 0,
       y: canvas.height - SnakeChunk.INITIAL_SIZE,
@@ -102,8 +103,10 @@ export default class Snake {
     const snakeTail = this.body[0]
 
     if (
-      (snakeTail.orientation === ORIENTATIONS.HORIZONTAL && snakeTail.width <= SnakeChunk.INITIAL_SIZE) ||
-      (snakeTail.orientation === ORIENTATIONS.VERTICAL && snakeTail.height <= SnakeChunk.INITIAL_SIZE)
+      (snakeTail.orientation === ORIENTATIONS.HORIZONTAL &&
+        snakeTail.width <= SnakeChunk.INITIAL_SIZE) ||
+      (snakeTail.orientation === ORIENTATIONS.VERTICAL &&
+        snakeTail.height <= SnakeChunk.INITIAL_SIZE)
     ) {
       this.body.shift()
       const snakeTail = this.body[0]
@@ -131,8 +134,44 @@ export default class Snake {
     ))
   }
 
+  setCollision () {
+    console.log('BOOM!!!')
+    this.collision = true
+  }
+
+  checkCollision () {
+    const snakeHead = this.body[this.body.length - 1]
+    const canvas = document.querySelector('canvas')
+
+    if (snakeHead.x + snakeHead.width > canvas.width ||
+        snakeHead.y + snakeHead.height > canvas.height) {
+      this.setCollision()
+    }
+
+    this.body.forEach((snakeChunk, index) => {
+      if (
+        (
+          (snakeHead.x + snakeHead.width > snakeChunk.x && snakeHead.x + snakeHead.width < snakeChunk.x + snakeChunk.width) ||
+          (snakeHead.x > snakeChunk.x && snakeHead.x < snakeChunk.x + snakeChunk.width)
+        ) &&
+        (
+          (snakeHead.y < snakeChunk.y + snakeChunk.height && snakeHead.y > snakeChunk.y) ||
+          (snakeHead.y + snakeHead.height > snakeChunk.y && snakeHead.y + snakeHead.height < snakeChunk.y + snakeChunk.height)
+        )
+      ) {
+        this.setCollision()
+      }
+    })
+  }
+
   update (direction) {
     this.draw()
+
+    if (this.collision) {
+      return
+    }
+
+    this.checkCollision()
     this.move(direction)
   }
 }
