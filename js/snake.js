@@ -171,7 +171,10 @@ export default class Snake {
     const canvas = document.querySelector('canvas')
 
     if (snakeHead.x + snakeHead.width > canvas.width ||
-        snakeHead.y + snakeHead.height > canvas.height) {
+        snakeHead.y + snakeHead.height > canvas.height ||
+        snakeHead.x < 0 ||
+        snakeHead.y < 0
+    ) {
       this.setCollision()
     }
 
