@@ -15,7 +15,7 @@ export default class SnakeChunk {
     this.color = color
   }
 
-  static INITIAL_SIZE = 10
+  static INITIAL_SIZE = 6
 
   move () {
     if (this.direction === DIRECTIONS.NORTH) this.y -= this.velocity

@@ -10,16 +10,16 @@ export default class Snake {
     this.collision = false
     this.body = [
       new SnakeChunk({
-        x: 0,
-        y: canvas.height - SnakeChunk.INITIAL_SIZE,
-        width: 200,
+        x: SnakeChunk.INITIAL_SIZE - 1,
+        y: canvas.height - SnakeChunk.INITIAL_SIZE - 2,
+        width: 80,
         direction: DIRECTIONS.EAST,
         velocity
       })
     ]
     this.direction = Snake.DIRECTIONS.STRAIGHT
     this.relativeDisplacement = 0
-    this.stepSize = SnakeChunk.INITIAL_SIZE + 5
+    this.stepSize = SnakeChunk.INITIAL_SIZE + SnakeChunk.INITIAL_SIZE / 2 - 1
   }
 
   static DIRECTIONS = {
@@ -164,7 +164,6 @@ export default class Snake {
   }
 
   setCollision () {
-    window.alert('BOOM!!!')
     this.collision = true
   }
 
