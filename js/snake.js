@@ -8,19 +8,21 @@ export default class Snake {
 
     this.velocity = velocity
     this.collision = false
-    this.body = [new SnakeChunk({
-      x: 0,
-      y: canvas.height - SnakeChunk.INITIAL_SIZE,
-      width: 200,
-      direction: DIRECTIONS.EAST,
-      velocity
-    })]
-    this.direction = Snake.ACTION_DIRECTIONS.STRAIGHT
+    this.body = [
+      new SnakeChunk({
+        x: 0,
+        y: canvas.height - SnakeChunk.INITIAL_SIZE,
+        width: 200,
+        direction: DIRECTIONS.EAST,
+        velocity
+      })
+    ]
+    this.direction = Snake.DIRECTIONS.STRAIGHT
     this.relativeDisplacement = 0
     this.stepSize = SnakeChunk.INITIAL_SIZE + 5
   }
 
-  static ACTION_DIRECTIONS = {
+  static DIRECTIONS = {
     STRAIGHT: Symbol('STRAIGHT'),
     LEFT: Symbol('LEFT'),
     RIGHT: Symbol('RIGHT')
@@ -62,22 +64,22 @@ export default class Snake {
     const snakeHead = this.body[this.body.length - 1]
 
     if (snakeHead.direction === DIRECTIONS.NORTH) {
-      return direction === Snake.ACTION_DIRECTIONS.LEFT
+      return direction === Snake.DIRECTIONS.LEFT
         ? DIRECTIONS.WEST
         : DIRECTIONS.EAST
     }
     if (snakeHead.direction === DIRECTIONS.SOUTH) {
-      return direction === Snake.ACTION_DIRECTIONS.LEFT
+      return direction === Snake.DIRECTIONS.LEFT
         ? DIRECTIONS.EAST
         : DIRECTIONS.WEST
     }
     if (snakeHead.direction === DIRECTIONS.EAST) {
-      return direction === Snake.ACTION_DIRECTIONS.LEFT
+      return direction === Snake.DIRECTIONS.LEFT
         ? DIRECTIONS.NORTH
         : DIRECTIONS.SOUTH
     }
     if (snakeHead.direction === DIRECTIONS.WEST) {
-      return direction === Snake.ACTION_DIRECTIONS.LEFT
+      return direction === Snake.DIRECTIONS.LEFT
         ? DIRECTIONS.SOUTH
         : DIRECTIONS.NORTH
     }
@@ -126,7 +128,7 @@ export default class Snake {
   }
 
   resetDirection () {
-    this.direction = Snake.ACTION_DIRECTIONS.STRAIGHT
+    this.direction = Snake.DIRECTIONS.STRAIGHT
   }
 
   turn () {
@@ -143,12 +145,12 @@ export default class Snake {
   }
 
   move () {
-    if (this.direction === Snake.ACTION_DIRECTIONS.STRAIGHT && this.body.length === 1) {
+    if (this.direction === Snake.DIRECTIONS.STRAIGHT && this.body.length === 1) {
       this.moveSingleChunkStraight()
       return
     }
 
-    if (this.relativeDisplacement >= this.stepSize && this.direction !== Snake.ACTION_DIRECTIONS.STRAIGHT) {
+    if (this.relativeDisplacement >= this.stepSize && this.direction !== Snake.DIRECTIONS.STRAIGHT) {
       this.turn()
       this.resetDirection()
       return
@@ -200,6 +202,10 @@ export default class Snake {
     } else {
       this.incrementRelativeDisplacement()
     }
+  }
+
+  setDirection (direction) {
+    this.direction = direction
   }
 
   update () {
