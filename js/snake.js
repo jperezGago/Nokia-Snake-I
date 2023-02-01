@@ -4,7 +4,7 @@ import { DIRECTIONS, ORIENTATIONS } from './utils.js'
 export default class Snake {
   constructor () {
     const canvas = document.querySelector('canvas')
-    const velocity = 1
+    const velocity = 0.5
 
     this.velocity = velocity
     this.collision = false
@@ -167,32 +167,43 @@ export default class Snake {
     this.collision = true
   }
 
-  checkCollision () {
-    const snakeHead = this.body[this.body.length - 1]
+  checkBoundariesCollisions (snakeHead) {
     const canvas = document.querySelector('canvas')
 
-    if (snakeHead.x + snakeHead.width > canvas.width ||
-        snakeHead.y + snakeHead.height > canvas.height ||
-        snakeHead.x < 0 ||
-        snakeHead.y < 0
+    if (
+      snakeHead.x + snakeHead.width > canvas.width ||
+      snakeHead.y + snakeHead.height > canvas.height ||
+      snakeHead.x < 0 ||
+      snakeHead.y < 0
     ) {
       this.setCollision()
     }
+  }
+
+  checkAutoCollisions (snakeHead) {
+    const bodyLength = this.body.length
+
+    if (bodyLength < 4) return
 
     this.body.forEach((snakeChunk, index) => {
+      if (bodyLength - 1 - index < 3) return
+
       if (
-        (
-          (snakeHead.x + snakeHead.width > snakeChunk.x && snakeHead.x + snakeHead.width < snakeChunk.x + snakeChunk.width) ||
-          (snakeHead.x > snakeChunk.x && snakeHead.x < snakeChunk.x + snakeChunk.width)
-        ) &&
-        (
-          (snakeHead.y < snakeChunk.y + snakeChunk.height && snakeHead.y > snakeChunk.y) ||
-          (snakeHead.y + snakeHead.height > snakeChunk.y && snakeHead.y + snakeHead.height < snakeChunk.y + snakeChunk.height)
-        )
+        snakeHead.x + snakeHead.width > snakeChunk.x &&
+        snakeHead.x < snakeChunk.x + snakeChunk.width &&
+        snakeHead.y < snakeChunk.y + snakeChunk.height &&
+        snakeHead.y + snakeHead.height > snakeChunk.y
       ) {
         this.setCollision()
       }
     })
+  }
+
+  checkCollisions () {
+    const snakeHead = this.body[this.body.length - 1]
+
+    this.checkBoundariesCollisions(snakeHead)
+    this.checkAutoCollisions(snakeHead)
   }
 
   manageRelativeDisplacement () {
@@ -214,7 +225,7 @@ export default class Snake {
       return
     }
 
-    this.checkCollision()
+    this.checkCollisions()
     this.manageRelativeDisplacement()
     this.move()
   }
