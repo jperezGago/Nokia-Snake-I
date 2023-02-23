@@ -1,8 +1,8 @@
 import SnakeChunk from './snakeChunk.js'
-import { DIRECTIONS, ORIENTATIONS } from './utils.js'
+import { DIRECTIONS, ORIENTATIONS, areBoxesInCollisions } from './utils.js'
 
 export default class Snake {
-  constructor () {
+  constructor (food) {
     const canvas = document.querySelector('canvas')
     const velocity = 0.5
     const snakeMargin = 2
@@ -23,6 +23,7 @@ export default class Snake {
     this.direction = Snake.DIRECTIONS.STRAIGHT
     this.relativeDisplacement = 0
     this.stepSize = stepSize
+    this.food = food
   }
 
   static DIRECTIONS = {
@@ -167,10 +168,6 @@ export default class Snake {
     this.body.forEach((snakeChunk) => snakeChunk.draw())
   }
 
-  setCollision () {
-    this.collision = true
-  }
-
   checkBoundariesCollisions (snakeHead) {
     const canvas = document.querySelector('canvas')
 
@@ -180,7 +177,7 @@ export default class Snake {
       snakeHead.x < 0 ||
       snakeHead.y < 0
     ) {
-      this.setCollision()
+      this.collision = true
     }
   }
 
@@ -192,15 +189,19 @@ export default class Snake {
     this.body.forEach((snakeChunk, index) => {
       if (bodyLength - 1 - index < 3) return
 
-      if (
-        snakeHead.x + snakeHead.width > snakeChunk.x &&
-        snakeHead.x < snakeChunk.x + snakeChunk.width &&
-        snakeHead.y < snakeChunk.y + snakeChunk.height &&
-        snakeHead.y + snakeHead.height > snakeChunk.y
-      ) {
-        this.setCollision()
+      if (areBoxesInCollisions(snakeHead, snakeChunk)) {
+        this.collision = true
       }
     })
+  }
+
+  checkFoodCollision (snakeHead) {
+    if (areBoxesInCollisions(snakeHead, this.food)) {
+      this.food.setPosition()
+
+      const snakeHead = this.body[this.body.length - 1]
+      snakeHead.expand(5)
+    }
   }
 
   checkCollisions () {
@@ -208,6 +209,7 @@ export default class Snake {
 
     this.checkBoundariesCollisions(snakeHead)
     this.checkAutoCollisions(snakeHead)
+    this.checkFoodCollision(snakeHead)
   }
 
   resetRelativeDisplacementAfterTurning () {

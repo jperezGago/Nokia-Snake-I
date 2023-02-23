@@ -10,12 +10,11 @@ function animate () {
   food.update()
 }
 
-const snake = new Snake()
 const food = new Food()
-food.setEnable(50, 50)
+const snake = new Snake(food)
 
 addKeysListener({
-  handleLeftKeyPressed: () => { snake.setDirection(Snake.DIRECTIONS.LEFT) },
-  handleRightKetPressed: () => { snake.setDirection(Snake.DIRECTIONS.RIGHT) }
+  handleLeftKeyPressed: () => snake.setDirection(Snake.DIRECTIONS.LEFT),
+  handleRightKetPressed: () => snake.setDirection(Snake.DIRECTIONS.RIGHT)
 })
 animate()
