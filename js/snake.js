@@ -1,35 +1,44 @@
 import SnakeChunk from './snakeChunk.js'
-import { DIRECTIONS, ORIENTATIONS, areBoxesInCollisions } from './utils.js'
+import { DIRECTIONS, CONTROL_DIRECTIONS, areBoxesInCollisions, TICK_RATE } from './utils.js'
 
 export default class Snake {
-  constructor (food) {
-    const canvas = document.querySelector('canvas')
-    const velocity = 0.5
-    const snakeMargin = 2
-    const boundariesMargin = 3
-    const stepSize = SnakeChunk.INITIAL_SIZE + snakeMargin
+  constructor ({ food, velocity, canvas, shortLength, snakeMargin, initialLength }) {
+    const stepLength = shortLength + snakeMargin
 
     this.velocity = velocity
     this.collision = false
+    this.collisionWithFood = false
+    this.controlDirection = CONTROL_DIRECTIONS.STRAIGHT
+    this.food = food
+    this.cicles = 0
+    this.stepLength = stepLength
+    this.canvas = canvas
+    this.shortLength = shortLength
+    this.initialLongLengthChunk = stepLength + shortLength
+    this.path = this.getPath()
     this.body = [
       new SnakeChunk({
-        x: boundariesMargin,
-        y: canvas.height - SnakeChunk.INITIAL_SIZE - boundariesMargin,
-        width: stepSize * 6,
+        x: canvas.borderMargin,
+        y: canvas.height - shortLength - canvas.borderMargin,
+        width: initialLength,
+        height: shortLength,
         direction: DIRECTIONS.EAST,
-        velocity
+        canvas
       })
     ]
-    this.direction = Snake.DIRECTIONS.STRAIGHT
-    this.relativeDisplacement = 0
-    this.stepSize = stepSize
-    this.food = food
   }
 
-  static DIRECTIONS = {
-    STRAIGHT: Symbol('STRAIGHT'),
-    LEFT: Symbol('LEFT'),
-    RIGHT: Symbol('RIGHT')
+  getPath () {
+    const xPath = new Array(1 + (this.canvas.width - this.shortLength) / this.stepLength)
+      .fill(null)
+      .map((_, index) => this.stepLength * index)
+    const yPath = new Array(1 + (this.canvas.height - this.shortLength) / this.stepLength)
+      .fill(null)
+      .map((_, index) => this.stepLength * index)
+
+    return yPath.flatMap(y =>
+      xPath.map(x => ({ x, y, width: this.shortLength, height: this.shortLength }))
+    )
   }
 
   getNewChunkPosition (newChunkDirection) {
@@ -37,29 +46,29 @@ export default class Snake {
 
     if (beforeChunk.direction === DIRECTIONS.NORTH) {
       return {
-        x: beforeChunk.x,
+        x: beforeChunk.x + (newChunkDirection === DIRECTIONS.WEST && -this.stepLength),
         y: beforeChunk.y
       }
     }
 
     if (beforeChunk.direction === DIRECTIONS.SOUTH) {
       return {
-        x: beforeChunk.x,
-        y: beforeChunk.y + beforeChunk.height - SnakeChunk.INITIAL_SIZE
+        x: beforeChunk.x + (newChunkDirection === DIRECTIONS.WEST && -this.stepLength),
+        y: beforeChunk.y + beforeChunk.height - this.shortLength
       }
     }
 
     if (beforeChunk.direction === DIRECTIONS.EAST) {
       return {
-        x: beforeChunk.x + beforeChunk.width - SnakeChunk.INITIAL_SIZE,
-        y: beforeChunk.y
+        x: beforeChunk.x + beforeChunk.width - this.shortLength,
+        y: beforeChunk.y + (newChunkDirection === DIRECTIONS.NORTH && -this.stepLength)
       }
     }
 
     if (beforeChunk.direction === DIRECTIONS.WEST) {
       return {
         x: beforeChunk.x,
-        y: beforeChunk.y
+        y: beforeChunk.y + (newChunkDirection === DIRECTIONS.NORTH && -this.stepLength)
       }
     }
   }
@@ -68,187 +77,198 @@ export default class Snake {
     const snakeHead = this.body[this.body.length - 1]
 
     if (snakeHead.direction === DIRECTIONS.NORTH) {
-      return this.direction === Snake.DIRECTIONS.LEFT
+      return this.controlDirection === CONTROL_DIRECTIONS.LEFT
         ? DIRECTIONS.WEST
         : DIRECTIONS.EAST
     }
     if (snakeHead.direction === DIRECTIONS.SOUTH) {
-      return this.direction === Snake.DIRECTIONS.LEFT
+      return this.controlDirection === CONTROL_DIRECTIONS.LEFT
         ? DIRECTIONS.EAST
         : DIRECTIONS.WEST
     }
     if (snakeHead.direction === DIRECTIONS.EAST) {
-      return this.direction === Snake.DIRECTIONS.LEFT
+      return this.controlDirection === CONTROL_DIRECTIONS.LEFT
         ? DIRECTIONS.NORTH
         : DIRECTIONS.SOUTH
     }
     if (snakeHead.direction === DIRECTIONS.WEST) {
-      return this.direction === Snake.DIRECTIONS.LEFT
+      return this.controlDirection === CONTROL_DIRECTIONS.LEFT
         ? DIRECTIONS.SOUTH
         : DIRECTIONS.NORTH
     }
   }
 
+  getNewChunkSizes (direction) {
+    const shortLengthChunk = this.shortLength
+
+    if (direction === DIRECTIONS.NORTH || direction === DIRECTIONS.SOUTH) {
+      return {
+        height: this.initialLongLengthChunk,
+        width: shortLengthChunk
+      }
+    }
+
+    return {
+      width: this.initialLongLengthChunk,
+      height: shortLengthChunk
+    }
+  }
+
   createChunk () {
-    const newChunkDirection = this.getNewChunkDirection()
+    const direction = this.getNewChunkDirection()
 
     return new SnakeChunk({
-      ...this.getNewChunkPosition(newChunkDirection),
-      direction: newChunkDirection,
-      velocity: this.velocity
+      ...this.getNewChunkPosition(direction),
+      ...this.getNewChunkSizes(direction),
+      direction,
+      canvas: this.canvas
     })
   }
 
   moveSingleChunkStraight () {
     const [snakeHead] = this.body
-    snakeHead.move()
+    snakeHead.move(this.stepLength)
   }
 
   shrinkTailChunk () {
     const snakeTail = this.body[0]
-
-    if (
-      (snakeTail.orientation === ORIENTATIONS.HORIZONTAL &&
-        snakeTail.width <= SnakeChunk.INITIAL_SIZE) ||
-      (snakeTail.orientation === ORIENTATIONS.VERTICAL &&
-        snakeTail.height <= SnakeChunk.INITIAL_SIZE)
-    ) {
-      this.body.shift()
-      const snakeTail = this.body[0]
-      snakeTail.shrink()
-    } else {
-      snakeTail.shrink()
-    }
+    snakeTail.shrink(this.stepLength)
   }
 
   expandHeadChunk () {
     const snakeHead = this.body[this.body.length - 1]
-    snakeHead.expand()
+    snakeHead.expand(this.stepLength)
   }
 
-  moveStraight () {
-    this.shrinkTailChunk()
-    this.expandHeadChunk()
+  expandTailChunk () {
+    const snakeTail = this.body[0]
+    snakeTail.tailExpand(this.stepLength)
+  }
+
+  getSnakeTailLength () {
+    const snakeTail = this.body[0]
+
+    return snakeTail.direction === DIRECTIONS.NORTH || snakeTail.direction === DIRECTIONS.SOUTH
+      ? snakeTail.height
+      : snakeTail.width
   }
 
   resetControlDirection () {
-    this.direction = Snake.DIRECTIONS.STRAIGHT
+    this.controlDirection = CONTROL_DIRECTIONS.STRAIGHT
+  }
+
+  removeHiddenTail () {
+    this.body.shift()
   }
 
   turn () {
     const newChunk = this.createChunk()
     this.body.push(newChunk)
-  }
 
-  move () {
-    if (
-      this.direction === Snake.DIRECTIONS.STRAIGHT &&
-      this.body.length === 1
-    ) {
-      this.moveSingleChunkStraight()
-      this.updateRelativeDisplacement()
+    const snakeTailLength = this.getSnakeTailLength()
+
+    if (snakeTailLength > this.shortLength) {
+      this.shrinkTailChunk()
       return
     }
 
-    if (
-      this.relativeDisplacement >= this.stepSize - this.velocity &&
-      this.direction !== Snake.DIRECTIONS.STRAIGHT
-    ) {
+    this.removeHiddenTail()
+    this.shrinkTailChunk()
+  }
+
+  moveStraight () {
+    const snakeTailLength = this.getSnakeTailLength()
+
+    if (snakeTailLength > this.shortLength) {
+      this.shrinkTailChunk()
+      this.expandHeadChunk()
+      return
+    }
+
+    this.removeHiddenTail()
+    this.move()
+  }
+
+  move () {
+    if (this.controlDirection === CONTROL_DIRECTIONS.STRAIGHT && this.body.length === 1) {
+      this.moveSingleChunkStraight()
+      return
+    }
+
+    if (this.controlDirection !== CONTROL_DIRECTIONS.STRAIGHT) {
       this.turn()
-      this.resetRelativeDisplacementAfterTurning()
       this.resetControlDirection()
       return
     }
 
     this.moveStraight()
-    this.updateRelativeDisplacement()
   }
 
-  draw () {
-    this.body.forEach((snakeChunk) => snakeChunk.draw())
+  setCollision () {
+    this.collision = true
   }
 
-  checkBoundariesCollisions (snakeHead) {
-    const canvas = document.querySelector('canvas')
-
+  checkBordersCollisions (snakeHead) {
     if (
-      snakeHead.x + snakeHead.width > canvas.width ||
-      snakeHead.y + snakeHead.height > canvas.height ||
+      snakeHead.x + snakeHead.width > this.canvas.width ||
+      snakeHead.y + snakeHead.height > this.canvas.height ||
       snakeHead.x < 0 ||
       snakeHead.y < 0
     ) {
-      this.collision = true
+      this.setCollision()
     }
   }
 
   checkAutoCollisions (snakeHead) {
+    const MINIMUM_CHUNKS_TO_CRASH = 4
     const bodyLength = this.body.length
 
-    if (bodyLength < 4) return
+    if (bodyLength < MINIMUM_CHUNKS_TO_CRASH) return
 
     this.body.forEach((snakeChunk, index) => {
       if (bodyLength - 1 - index < 3) return
 
       if (areBoxesInCollisions(snakeHead, snakeChunk)) {
-        this.collision = true
+        this.setCollision()
       }
     })
   }
 
+  resetCollisionWithFood () {
+    this.collisionWithFood = false
+  }
+
   checkFoodCollision (snakeHead) {
     if (areBoxesInCollisions(snakeHead, this.food)) {
-      this.food.setPosition()
-
-      const snakeHead = this.body[this.body.length - 1]
-      snakeHead.expand(5)
+      this.expandTailChunk()
+      this.collisionWithFood = true
     }
   }
 
   checkCollisions () {
     const snakeHead = this.body[this.body.length - 1]
 
-    this.checkBoundariesCollisions(snakeHead)
+    this.checkBordersCollisions(snakeHead)
     this.checkAutoCollisions(snakeHead)
     this.checkFoodCollision(snakeHead)
   }
 
-  resetRelativeDisplacementAfterTurning () {
-    const lastChunkWithSameOrientation = this.body[this.body.length - 3]
-
-    if (!lastChunkWithSameOrientation) {
-      this.relativeDisplacement = SnakeChunk.INITIAL_SIZE
-      return
-    }
-
-    const lastDirectionWithSameOrientation = lastChunkWithSameOrientation.direction
-    const lastChunkDirection = this.body[this.body.length - 1].direction
-
-    if (lastDirectionWithSameOrientation === lastChunkDirection) {
-      this.relativeDisplacement = 0
-      return
-    }
-
-    this.relativeDisplacement = SnakeChunk.INITIAL_SIZE
-  }
-
-  updateRelativeDisplacement () {
-    if (this.relativeDisplacement >= this.stepSize - this.velocity) {
-      this.relativeDisplacement = 0
-    } else {
-      this.relativeDisplacement += this.velocity
-    }
-  }
-
   setDirection (direction) {
-    this.direction = direction
+    this.controlDirection = direction
+  }
+
+  draw () {
+    this.body.forEach((snakeChunk) => snakeChunk.draw())
   }
 
   update () {
-    this.draw()
-
-    if (!this.collision) {
-      this.checkCollisions()
+    if (this.cicles >= TICK_RATE / this.velocity) {
       this.move()
+      this.checkCollisions()
+      this.cicles = 0
     }
+
+    this.draw()
+    this.cicles += 1
   }
 }

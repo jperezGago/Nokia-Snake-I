@@ -1,7 +1,16 @@
 export default class Canvas {
-  static ctx = document.querySelector('canvas').getContext('2d')
+  constructor ({ width, height, borderMargin }) {
+    const ctx = document.querySelector('canvas').getContext('2d')
+    ctx.canvas.width = width
+    ctx.canvas.height = height
 
-  static drawRectangule ({ x, y, width, height, fill = true, color = 'black' }) {
+    this.ctx = ctx
+    this.width = width
+    this.height = height
+    this.borderMargin = borderMargin
+  }
+
+  drawRectangule ({ x, y, width, height, fill = true, color = 'black' }) {
     if (fill) {
       this.ctx.fillStyle = color
       this.ctx.fillRect(x, y, width, height)
@@ -12,8 +21,12 @@ export default class Canvas {
     this.ctx.strokeRect(x, y, width, height)
   }
 
-  static clearCanvas () {
+  clearCanvas () {
     const canvas = document.querySelector('canvas')
     this.ctx.clearRect(0, 0, canvas.width, canvas.height)
+  }
+
+  update () {
+    this.clearCanvas()
   }
 }

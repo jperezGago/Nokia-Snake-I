@@ -1,63 +1,73 @@
-import Canvas from './canvas.js'
-import { DIRECTIONS, ORIENTATIONS } from './utils.js'
+import { DIRECTIONS } from './utils.js'
 
 export default class SnakeChunk {
-  constructor ({ x, y, width, direction, velocity, color = 'black' }) {
-    this.orientation = direction === DIRECTIONS.NORTH || direction === DIRECTIONS.SOUTH
-      ? ORIENTATIONS.VERTICAL
-      : ORIENTATIONS.HORIZONTAL
+  constructor ({ x, y, width, height, direction, canvas }) {
     this.x = x
     this.y = y
-    this.width = width || SnakeChunk.INITIAL_SIZE
-    this.height = SnakeChunk.INITIAL_SIZE
+    this.width = width
+    this.height = height
     this.direction = direction
-    this.velocity = velocity
-    this.color = color
+    this.canvas = canvas
   }
 
-  static INITIAL_SIZE = 10
-
-  move () {
-    if (this.direction === DIRECTIONS.NORTH) this.y -= this.velocity
-    if (this.direction === DIRECTIONS.SOUTH) this.y += this.velocity
-    if (this.direction === DIRECTIONS.EAST) this.x += this.velocity
-    if (this.direction === DIRECTIONS.WEST) this.x -= this.velocity
+  move (length) {
+    if (this.direction === DIRECTIONS.NORTH) this.y -= length
+    if (this.direction === DIRECTIONS.SOUTH) this.y += length
+    if (this.direction === DIRECTIONS.EAST) this.x += length
+    if (this.direction === DIRECTIONS.WEST) this.x -= length
   }
 
-  shrink () {
-    if (this.direction === DIRECTIONS.NORTH) this.height -= this.velocity
+  shrink (decrement) {
+    if (this.direction === DIRECTIONS.NORTH) this.height -= decrement
     if (this.direction === DIRECTIONS.SOUTH) {
-      this.height -= this.velocity
-      this.y += this.velocity
+      this.height -= decrement
+      this.y += decrement
     }
     if (this.direction === DIRECTIONS.EAST) {
-      this.width -= this.velocity
-      this.x += this.velocity
+      this.width -= decrement
+      this.x += decrement
     }
     if (this.direction === DIRECTIONS.WEST) {
-      this.width -= this.velocity
+      this.width -= decrement
     }
   }
 
   expand (increment) {
     if (this.direction === DIRECTIONS.NORTH) {
-      this.height += this.velocity
-      this.y -= increment ?? this.velocity
+      this.height += increment
+      this.y -= increment
     }
     if (this.direction === DIRECTIONS.SOUTH) {
-      this.height += increment ?? this.velocity
+      this.height += increment
     }
     if (this.direction === DIRECTIONS.EAST) {
-      this.width += increment ?? this.velocity
+      this.width += increment
     }
     if (this.direction === DIRECTIONS.WEST) {
-      this.width += increment ?? this.velocity
-      this.x -= increment ?? this.velocity
+      this.width += increment
+      this.x -= increment
+    }
+  }
+
+  tailExpand (increment) {
+    if (this.direction === DIRECTIONS.NORTH) {
+      this.height += increment
+    }
+    if (this.direction === DIRECTIONS.SOUTH) {
+      this.height += increment
+      this.y -= increment
+    }
+    if (this.direction === DIRECTIONS.EAST) {
+      this.width += increment
+      this.x -= increment
+    }
+    if (this.direction === DIRECTIONS.WEST) {
+      this.width += increment
     }
   }
 
   draw () {
-    Canvas.drawRectangule({
+    this.canvas.drawRectangule({
       x: this.x,
       y: this.y,
       width: this.width,
