@@ -1,42 +1,40 @@
 export default class Food {
-  constructor (canvas) {
-    const SQUARE_SIZE = 10
-
-    this.x = 45
-    this.y = 0
-    this.miniSquareSize = 2
+  constructor (canvas, size) {
+    this.miniSquareSize = (size - 1) / 3
+    this.miniSquareSizeMargin = 0.5
     this.color = 'grey'
     // Necessary to check for collisions
-    this.width = SQUARE_SIZE
-    this.height = SQUARE_SIZE
+    this.width = size
+    this.height = size
+    // this.borderMarginCanvas = borderMarginCanvas
     this.canvas = canvas
   }
 
   draw () {
     this.canvas.drawRectangule({
-      x: this.x + 4,
-      y: this.y + 2,
+      x: this.x + this.miniSquareSize,
+      y: this.y,
       width: this.miniSquareSize,
       height: this.miniSquareSize,
       color: this.color
     })
     this.canvas.drawRectangule({
-      x: this.x + 4,
-      y: this.y + 6,
+      x: this.x + this.miniSquareSize,
+      y: this.y + 2 * this.miniSquareSize,
       width: this.miniSquareSize,
       height: this.miniSquareSize,
       color: this.color
     })
     this.canvas.drawRectangule({
-      x: this.x + 2,
-      y: this.y + 4,
+      x: this.x,
+      y: this.y + this.miniSquareSize,
       width: this.miniSquareSize,
       height: this.miniSquareSize,
       color: this.color
     })
     this.canvas.drawRectangule({
-      x: this.x + 6,
-      y: this.y + 4,
+      x: this.x + 2 * this.miniSquareSize,
+      y: this.y + this.miniSquareSize,
       width: this.miniSquareSize,
       height: this.miniSquareSize,
       color: this.color
@@ -44,11 +42,10 @@ export default class Food {
   }
 
   setPosition (x, y) {
-    this.x = x
-    this.y = y
+    this.x = x + this.miniSquareSizeMargin
+    this.y = y + this.miniSquareSizeMargin
   }
 
-  1
   update () {
     this.draw()
   }

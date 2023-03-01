@@ -4,29 +4,30 @@ import addKeysListener from './keys.js'
 import Food from './food.js'
 import { areBoxesInCollisions, CONTROL_DIRECTIONS, getRandom } from './utils.js'
 
-const BORDER_MARGIN_CANVAS = 0
-const VELOCITY = 1
-const SHORT_LENGTH = 10
-const SNAKE_MARGIN = 5
+const BORDER_MARGIN_CANVAS = 6
+const VELOCITY = 8
+const SHORT_LENGTH = 15
+const SNAKE_MARGIN = 2
 
 let gameId
 const stepLength = SHORT_LENGTH + SNAKE_MARGIN
 const minimalSnakeLength = stepLength + SHORT_LENGTH
-const initialSnakeLength = minimalSnakeLength + stepLength * 1
+const initialSnakeLength = minimalSnakeLength + stepLength * 5
 
 const canvas = new Canvas({
-  width: initialSnakeLength + stepLength * 1 + BORDER_MARGIN_CANVAS * 2,
-  height: initialSnakeLength + stepLength * 1 + BORDER_MARGIN_CANVAS * 2,
+  width: initialSnakeLength + stepLength * 20 + BORDER_MARGIN_CANVAS * 2,
+  height: initialSnakeLength + stepLength * 13 + BORDER_MARGIN_CANVAS * 2,
   borderMargin: BORDER_MARGIN_CANVAS
 })
-const food = new Food(canvas)
+const food = new Food(canvas, SHORT_LENGTH)
 const snake = new Snake({
   food,
   velocity: VELOCITY,
   canvas,
   shortLength: SHORT_LENGTH,
   snakeMargin: SNAKE_MARGIN,
-  initialLength: initialSnakeLength
+  initialLength: initialSnakeLength,
+  borderMarginCanvas: BORDER_MARGIN_CANVAS
 })
 
 function getEmptySnakePath () {

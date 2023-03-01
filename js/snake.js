@@ -2,7 +2,7 @@ import SnakeChunk from './snakeChunk.js'
 import { DIRECTIONS, CONTROL_DIRECTIONS, areBoxesInCollisions, TICK_RATE } from './utils.js'
 
 export default class Snake {
-  constructor ({ food, velocity, canvas, shortLength, snakeMargin, initialLength }) {
+  constructor ({ food, velocity, canvas, shortLength, snakeMargin, initialLength, borderMarginCanvas }) {
     const stepLength = shortLength + snakeMargin
 
     this.velocity = velocity
@@ -14,6 +14,7 @@ export default class Snake {
     this.stepLength = stepLength
     this.canvas = canvas
     this.shortLength = shortLength
+    this.borderMarginCanvas = borderMarginCanvas
     this.initialLongLengthChunk = stepLength + shortLength
     this.path = this.getPath()
     this.body = [
@@ -29,12 +30,12 @@ export default class Snake {
   }
 
   getPath () {
-    const xPath = new Array(1 + (this.canvas.width - this.shortLength) / this.stepLength)
+    const xPath = new Array(1 + (this.canvas.width - 2 * this.borderMarginCanvas - this.shortLength) / this.stepLength)
       .fill(null)
-      .map((_, index) => this.stepLength * index)
-    const yPath = new Array(1 + (this.canvas.height - this.shortLength) / this.stepLength)
+      .map((_, index) => this.borderMarginCanvas + this.stepLength * index)
+    const yPath = new Array(1 + (this.canvas.height - 2 * this.borderMarginCanvas - this.shortLength) / this.stepLength)
       .fill(null)
-      .map((_, index) => this.stepLength * index)
+      .map((_, index) => this.borderMarginCanvas + this.stepLength * index)
 
     return yPath.flatMap(y =>
       xPath.map(x => ({ x, y, width: this.shortLength, height: this.shortLength }))
