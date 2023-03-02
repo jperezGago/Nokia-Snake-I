@@ -28,6 +28,31 @@ body {
   height: 100vh;
 }
 
+.container {
+  position: relative;
+  background-color: rgb(178, 227, 42);
+}
+
+.score {
+  position: absolute;
+  font-size: large;
+  font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+  top: 13px;
+  left: 20px;
+}
+
+.nokia {
+  position: absolute;
+}
+
+.canvas-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 182px;
+}
+
 canvas {
-  border: 2px solid grey;
+  border: 2px solid black;
 }

@@ -3,20 +3,26 @@ import Snake from './snake.js'
 import addKeysListener from './keys.js'
 import Food from './food.js'
 import { areBoxesInCollisions, CONTROL_DIRECTIONS, getRandom } from './utils.js'
+import Display from './display.js'
 
-const BORDER_MARGIN_CANVAS = 6
-const VELOCITY = 8
-const SHORT_LENGTH = 15
+const BORDER_MARGIN_CANVAS = 3
+const VELOCITY = 5
+const SHORT_LENGTH = 10
 const SNAKE_MARGIN = 2
 
 let gameId
 const stepLength = SHORT_LENGTH + SNAKE_MARGIN
 const minimalSnakeLength = stepLength + SHORT_LENGTH
 const initialSnakeLength = minimalSnakeLength + stepLength * 5
+const canvasWidth = initialSnakeLength + stepLength * 10 + BORDER_MARGIN_CANVAS * 2
+const canvasHeight = initialSnakeLength + stepLength * 3 + BORDER_MARGIN_CANVAS * 2
+const containerWidth = canvasWidth + 40
+const containerHeight = canvasHeight + 80
 
+const display = new Display(containerWidth, containerHeight)
 const canvas = new Canvas({
-  width: initialSnakeLength + stepLength * 20 + BORDER_MARGIN_CANVAS * 2,
-  height: initialSnakeLength + stepLength * 13 + BORDER_MARGIN_CANVAS * 2,
+  width: canvasWidth,
+  height: canvasHeight,
   borderMargin: BORDER_MARGIN_CANVAS
 })
 const food = new Food(canvas, SHORT_LENGTH)
