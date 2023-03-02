@@ -4,12 +4,7 @@ export const DIRECTIONS = {
   EAST: Symbol('EAST'),
   WEST: Symbol('WEST')
 }
-export const CONTROL_DIRECTIONS = {
-  STRIGHT: Symbol('STRIGHT'),
-  LEFT: Symbol('LEFT'),
-  RIGHT: Symbol('RIGHT')
-}
-export const TICK_RATE = 60
+export const FPS = 60
 
 export function getRandom (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)

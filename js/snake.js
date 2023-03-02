@@ -1,5 +1,6 @@
+import Controls from './controls.js'
 import SnakeChunk from './snakeChunk.js'
-import { DIRECTIONS, CONTROL_DIRECTIONS, areBoxesInCollisions, TICK_RATE } from './utils.js'
+import { DIRECTIONS, areBoxesInCollisions, FPS } from './utils.js'
 
 export default class Snake {
   constructor ({ food, velocity, canvas, shortLength, snakeMargin, initialLength, borderMarginCanvas }) {
@@ -8,7 +9,7 @@ export default class Snake {
     this.velocity = velocity
     this.collision = false
     this.collisionWithFood = false
-    this.controlDirection = CONTROL_DIRECTIONS.STRAIGHT
+    this.controlDirection = null
     this.food = food
     this.cicles = 0
     this.stepLength = stepLength
@@ -78,22 +79,22 @@ export default class Snake {
     const snakeHead = this.body[this.body.length - 1]
 
     if (snakeHead.direction === DIRECTIONS.NORTH) {
-      return this.controlDirection === CONTROL_DIRECTIONS.LEFT
+      return this.controlDirection === Controls.controlDirections.left
         ? DIRECTIONS.WEST
         : DIRECTIONS.EAST
     }
     if (snakeHead.direction === DIRECTIONS.SOUTH) {
-      return this.controlDirection === CONTROL_DIRECTIONS.LEFT
+      return this.controlDirection === Controls.controlDirections.left
         ? DIRECTIONS.EAST
         : DIRECTIONS.WEST
     }
     if (snakeHead.direction === DIRECTIONS.EAST) {
-      return this.controlDirection === CONTROL_DIRECTIONS.LEFT
+      return this.controlDirection === Controls.controlDirections.left
         ? DIRECTIONS.NORTH
         : DIRECTIONS.SOUTH
     }
     if (snakeHead.direction === DIRECTIONS.WEST) {
-      return this.controlDirection === CONTROL_DIRECTIONS.LEFT
+      return this.controlDirection === Controls.controlDirections.left
         ? DIRECTIONS.SOUTH
         : DIRECTIONS.NORTH
     }
@@ -155,7 +156,7 @@ export default class Snake {
   }
 
   resetControlDirection () {
-    this.controlDirection = CONTROL_DIRECTIONS.STRAIGHT
+    this.controlDirection = null
   }
 
   removeHiddenTail () {
@@ -191,12 +192,12 @@ export default class Snake {
   }
 
   move () {
-    if (this.controlDirection === CONTROL_DIRECTIONS.STRAIGHT && this.body.length === 1) {
+    if (!this.controlDirection && this.body.length === 1) {
       this.moveSingleChunkStraight()
       return
     }
 
-    if (this.controlDirection !== CONTROL_DIRECTIONS.STRAIGHT) {
+    if (this.controlDirection) {
       this.turn()
       this.resetControlDirection()
       return
@@ -263,7 +264,7 @@ export default class Snake {
   }
 
   update () {
-    if (this.cicles >= TICK_RATE / this.velocity) {
+    if (this.cicles >= FPS / this.velocity) {
       this.move()
       this.checkCollisions()
       this.cicles = 0
