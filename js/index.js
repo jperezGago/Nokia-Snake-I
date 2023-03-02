@@ -4,6 +4,7 @@ import addKeysListener from './keys.js'
 import Food from './food.js'
 import { areBoxesInCollisions, CONTROL_DIRECTIONS, getRandom } from './utils.js'
 import Display from './display.js'
+import Game from './game.js'
 
 const BORDER_MARGIN_CANVAS = 3
 const VELOCITY = 5
@@ -19,6 +20,7 @@ const canvasHeight = initialSnakeLength + stepLength * 3 + BORDER_MARGIN_CANVAS 
 const containerWidth = canvasWidth + 40
 const containerHeight = canvasHeight + 80
 
+const game = new Game()
 const display = new Display(containerWidth, containerHeight)
 const canvas = new Canvas({
   width: canvasWidth,
@@ -58,6 +60,8 @@ function animate () {
   }
 
   if (snake.collisionWithFood) {
+    game.addScore()
+    display.drawScore(game.score)
     const emptyPath = getEmptySnakePath()
 
     if (!emptyPath.length) {
