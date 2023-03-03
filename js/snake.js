@@ -14,18 +14,23 @@ export default class Snake {
     this.cicles = 0
     this.stepLength = stepLength
     this.canvas = canvas
+    this.initialLength = initialLength
     this.shortLength = shortLength
     this.borderMarginCanvas = borderMarginCanvas
     this.initialLongLengthChunk = stepLength + shortLength
     this.path = this.getPath()
-    this.body = [
+    this.body = this.getInitialBody()
+  }
+
+  getInitialBody () {
+    return [
       new SnakeChunk({
-        x: canvas.borderMargin,
-        y: canvas.height - shortLength - canvas.borderMargin,
-        width: initialLength,
-        height: shortLength,
+        x: this.canvas.borderMargin,
+        y: this.canvas.height - this.shortLength - this.canvas.borderMargin,
+        width: this.initialLength,
+        height: this.shortLength,
         direction: DIRECTIONS.EAST,
-        canvas
+        canvas: this.canvas
       })
     ]
   }
@@ -208,6 +213,11 @@ export default class Snake {
 
   setCollision () {
     this.collision = true
+  }
+
+  reset () {
+    this.collision = false
+    this.body = this.getInitialBody()
   }
 
   checkBordersCollisions (snakeHead) {

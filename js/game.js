@@ -45,14 +45,29 @@ export default class Game {
     this.canvas = canvas
     this.gameId = null
     this.score = 0
+    this.isRunning = false
+  }
+
+  startGame () {
+    this.isRunning = true
+    this.controls.setSnakeControls(this.snake.setDirection.bind(this.snake))
+  }
+
+  stopGame () {
+    this.isRunning = false
+    this.resetScore()
+    this.snake.reset()
+    this.display.drawStartMenu()
   }
 
   resetScore () {
     this.score = 0
+    this.display.drawScore(0)
   }
 
   addScore () {
     this.score += 1
+    this.display.drawScore(this.score)
   }
 
   getEmptySnakePath () {
@@ -67,40 +82,48 @@ export default class Game {
     return { x, y }
   }
 
-  animate () {
-    this.gameId = window.requestAnimationFrame(this.animate.bind(this))
+  setNewFoodPosition (emptyPath) {
+    const { x, y } = emptyPath[getRandom(0, emptyPath.length - 1)]
+    this.food.setPosition(x, y)
+    this.snake.resetCollisionWithFood()
+  }
+
+  update () {
+    this.gameId = window.requestAnimationFrame(this.update.bind(this))
+
+    if (!this.isRunning) return
 
     if (this.snake.collision) {
-      console.log('GAME OVER')
-      window.cancelAnimationFrame(this.gameId)
+      this.stopGame()
       return
     }
 
-    if (this.snake.collisionWithFood) {
-      this.addScore()
-      this.display.drawScore(this.score)
-      const emptyPath = this.getEmptySnakePath()
-
-      if (!emptyPath.length) {
-        console.log('HAS GANADO!')
-        window.cancelAnimationFrame(this.gameId)
-        return
-      }
-
-      const { x, y } = emptyPath[getRandom(0, emptyPath.length - 1)]
-      this.food.setPosition(x, y)
-      this.snake.resetCollisionWithFood()
+    if (!this.snake.collisionWithFood) {
+      this.display.drawGame()
+      this.canvas.update()
+      this.snake.update()
+      this.food.update()
+      return
     }
 
-    this.canvas.update()
-    this.snake.update()
-    this.food.update()
+    this.addScore()
+    const emptyPath = this.getEmptySnakePath()
+
+    if (!emptyPath.length) {
+      console.log('HAS GANADO!')
+      // TODO: Crear un mensaje de éxito
+      this.stopGame()
+      return
+    }
+
+    this.setNewFoodPosition(emptyPath)
   }
 
   start () {
+    this.display.drawStartMenu()
     const { x, y } = this.getEmptyFoodPosition()
     this.food.setPosition(x, y)
-    this.controls.setSnakeControls(this.snake)
-    this.animate()
+    this.controls.setStartControl(this.startGame.bind(this))
+    this.update()
   }
 }

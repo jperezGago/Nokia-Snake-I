@@ -15,10 +15,16 @@ export default class Controls {
     rigth: Symbol('rigth')
   }
 
-  setSnakeControls (snake) {
+  setStartControl (startGame) {
     window.addEventListener('keydown', (event) => {
-      if (event.keyCode === this.keysCode.left) snake.setDirection(Controls.controlDirections.left)
-      if (event.keyCode === this.keysCode.right) snake.setDirection(Controls.controlDirections.rigth)
+      if (event.keyCode === this.keysCode.enter) startGame()
+    })
+  }
+
+  setSnakeControls (snakeSetDirection) {
+    window.addEventListener('keydown', (event) => {
+      if (event.keyCode === this.keysCode.left) snakeSetDirection(Controls.controlDirections.left)
+      if (event.keyCode === this.keysCode.right) snakeSetDirection(Controls.controlDirections.rigth)
     })
   }
 }
