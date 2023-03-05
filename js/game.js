@@ -55,9 +55,10 @@ export default class Game {
 
   stopGame ({ winner }) {
     const message = winner
-      ? 'Enhorabuena! Has completado el juego'
-      : `Lo siento has perdido! 
-      Has conseguido ${this.score} ${this.score === 1 ? 'punto' : 'puntos'}`
+      ? `CONGRATULATIONS!
+      You have completed the game`
+      : `GAME OVER! 
+      Score: ${this.score}`
 
     this.isRunning = false
     this.display.drawFinishGame(message)

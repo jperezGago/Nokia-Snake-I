@@ -29,14 +29,9 @@ body {
   font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.container {
-  position: relative;
-  height: 100%;
-}
-
 .screen {
   background-color: rgb(178, 227, 42);
-  margin-top: 230px;
+  margin-bottom: 204px;
   display: flex;
   justify-content: center;
   align-items: center;
