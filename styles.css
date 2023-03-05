@@ -31,38 +31,50 @@ body {
 
 .container {
   position: relative;
+  height: 100%;
+}
+
+.screen {
   background-color: rgb(178, 227, 42);
+  margin-top: 230px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .score {
-  position: absolute;
   font-size: 18px;
-  top: 13px;
-  left: 20px;
-}
-
-.nokia {
-  position: absolute;
-}
-
-.canvas-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 182px;
-}
-
-.start-menu {
-  color: rgb(178, 227, 42);
-  background-color: black;
-  border-radius: 4px;
-  padding: 5px 0;
-  width: 100%;
-  text-align: center;
-  font-size: 22px;
 }
 
 canvas {
   border: 2px solid black;
+}
+
+.menu {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.menu-instructions {
+  font-size: 16px;
+  position: absolute;
+  top: 20px;
+}
+
+.menu-snake {
+  background-color: black;
+  color: rgb(178, 227, 42);
+  border-radius: 4px;
+  padding: 5px 0;
+  width: 85%;
+  font-size: 22px;
+}
+
+.nokia {
+  position: absolute;
 }

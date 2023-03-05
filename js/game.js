@@ -17,10 +17,10 @@ export default class Game {
     const initialSnakeLength = minimalSnakeLength + stepLength * 5
     const canvasWidth = initialSnakeLength + stepLength * 10 + BORDER_MARGIN_CANVAS * 2
     const canvasHeight = initialSnakeLength + stepLength * 3 + BORDER_MARGIN_CANVAS * 2
-    const containerWidth = canvasWidth + 40
-    const containerHeight = canvasHeight + 80
+    const screenWidth = canvasWidth + 40
+    const screenHeight = canvasHeight + 58
 
-    const display = new Display(containerWidth, containerHeight)
+    const display = new Display(screenWidth, screenHeight)
     const canvas = new Canvas({
       width: canvasWidth,
       height: canvasHeight,
@@ -57,7 +57,7 @@ export default class Game {
     this.isRunning = false
     this.resetScore()
     this.snake.reset()
-    this.display.drawStartMenu()
+    this.display.drawMenu()
   }
 
   resetScore () {
@@ -120,7 +120,7 @@ export default class Game {
   }
 
   start () {
-    this.display.drawStartMenu()
+    this.display.drawMenu()
     const { x, y } = this.getEmptyFoodPosition()
     this.food.setPosition(x, y)
     this.controls.setStartControl(this.startGame.bind(this))

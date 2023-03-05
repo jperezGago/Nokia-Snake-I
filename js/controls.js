@@ -14,7 +14,7 @@ export default class Controls {
 
   setStartControl (startGame) {
     window.addEventListener('keydown', (event) => {
-      if (event.keyCode === this.keysCode.enter) startGame()
+      startGame()
     })
   }
 
