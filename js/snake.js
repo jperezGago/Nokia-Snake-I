@@ -1,6 +1,5 @@
-import Controls from './controls.js'
 import SnakeChunk from './snakeChunk.js'
-import { DIRECTIONS, areBoxesInCollisions, FPS } from './utils.js'
+import { DIRECTIONS, ORIENTATIONS, areBoxesInCollisions, getOrientation, FPS } from './utils.js'
 
 export default class Snake {
   constructor ({ food, velocity, canvas, shortLength, snakeMargin, initialLength, borderMarginCanvas }) {
@@ -48,8 +47,21 @@ export default class Snake {
     )
   }
 
+  getHead () {
+    return this.body[this.body.length - 1]
+  }
+
+  getTail () {
+    return this.body[0]
+  }
+
+  getDirection () {
+    const snakeHead = this.getHead()
+    return snakeHead.direction
+  }
+
   getNewChunkPosition (newChunkDirection) {
-    const beforeChunk = this.body[this.body.length - 1]
+    const beforeChunk = this.getHead()
 
     if (beforeChunk.direction === DIRECTIONS.NORTH) {
       return {
@@ -80,49 +92,22 @@ export default class Snake {
     }
   }
 
-  getNewChunkDirection () {
-    const snakeHead = this.body[this.body.length - 1]
-
-    if (snakeHead.direction === DIRECTIONS.NORTH) {
-      return this.controlDirection === Controls.controlDirections.left
-        ? DIRECTIONS.WEST
-        : DIRECTIONS.EAST
-    }
-    if (snakeHead.direction === DIRECTIONS.SOUTH) {
-      return this.controlDirection === Controls.controlDirections.left
-        ? DIRECTIONS.EAST
-        : DIRECTIONS.WEST
-    }
-    if (snakeHead.direction === DIRECTIONS.EAST) {
-      return this.controlDirection === Controls.controlDirections.left
-        ? DIRECTIONS.NORTH
-        : DIRECTIONS.SOUTH
-    }
-    if (snakeHead.direction === DIRECTIONS.WEST) {
-      return this.controlDirection === Controls.controlDirections.left
-        ? DIRECTIONS.SOUTH
-        : DIRECTIONS.NORTH
-    }
-  }
-
   getNewChunkSizes (direction) {
-    const shortLengthChunk = this.shortLength
-
-    if (direction === DIRECTIONS.NORTH || direction === DIRECTIONS.SOUTH) {
+    if (getOrientation(direction) === ORIENTATIONS.VERTICAL) {
       return {
         height: this.initialLongLengthChunk,
-        width: shortLengthChunk
+        width: this.shortLength
       }
     }
 
     return {
       width: this.initialLongLengthChunk,
-      height: shortLengthChunk
+      height: this.shortLength
     }
   }
 
   createChunk () {
-    const direction = this.getNewChunkDirection()
+    const direction = this.controlDirection
 
     return new SnakeChunk({
       ...this.getNewChunkPosition(direction),
@@ -138,24 +123,24 @@ export default class Snake {
   }
 
   shrinkTailChunk () {
-    const snakeTail = this.body[0]
+    const snakeTail = this.getTail()
     snakeTail.shrink(this.stepLength)
   }
 
   expandHeadChunk () {
-    const snakeHead = this.body[this.body.length - 1]
+    const snakeHead = this.getHead()
     snakeHead.expand(this.stepLength)
   }
 
   expandTailChunk () {
-    const snakeTail = this.body[0]
+    const snakeTail = this.getTail()
     snakeTail.tailExpand(this.stepLength)
   }
 
   getSnakeTailLength () {
-    const snakeTail = this.body[0]
+    const snakeTail = this.getTail()
 
-    return snakeTail.direction === DIRECTIONS.NORTH || snakeTail.direction === DIRECTIONS.SOUTH
+    return getOrientation(snakeTail.direction) === ORIENTATIONS.VERTICAL
       ? snakeTail.height
       : snakeTail.width
   }
@@ -197,14 +182,19 @@ export default class Snake {
   }
 
   move () {
-    if (!this.controlDirection && this.body.length === 1) {
-      this.moveSingleChunkStraight()
+    const snakeDirection = this.getDirection()
+
+    if (
+      this.controlDirection &&
+      getOrientation(this.controlDirection) !== getOrientation(snakeDirection)
+    ) {
+      this.turn()
+      this.resetControlDirection()
       return
     }
 
-    if (this.controlDirection) {
-      this.turn()
-      this.resetControlDirection()
+    if (this.body.length === 1) {
+      this.moveSingleChunkStraight()
       return
     }
 
@@ -258,15 +248,15 @@ export default class Snake {
   }
 
   checkCollisions () {
-    const snakeHead = this.body[this.body.length - 1]
+    const snakeHead = this.getHead()
 
     this.checkBordersCollisions(snakeHead)
     this.checkAutoCollisions(snakeHead)
     this.checkFoodCollision(snakeHead)
   }
 
-  setDirection (direction) {
-    this.controlDirection = direction
+  setControlDirection (controlDirection) {
+    this.controlDirection = controlDirection
   }
 
   draw () {

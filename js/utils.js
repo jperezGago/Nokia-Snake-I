@@ -4,6 +4,12 @@ export const DIRECTIONS = {
   EAST: Symbol('EAST'),
   WEST: Symbol('WEST')
 }
+
+export const ORIENTATIONS = {
+  VERTICAL: Symbol('VERTICAL'),
+  HORIZONTAL: Symbol('HORIZONTAL')
+}
+
 export const FPS = 60
 
 export function getRandom (min, max) {
@@ -15,4 +21,10 @@ export function areBoxesInCollisions (box1, box2) {
         box1.x < box2.x + box2.width &&
         box1.y < box2.y + box2.height &&
         box1.y + box1.height > box2.y
+}
+
+export function getOrientation (direction) {
+  return direction === DIRECTIONS.NORTH || direction === DIRECTIONS.SOUTH
+    ? ORIENTATIONS.VERTICAL
+    : ORIENTATIONS.HORIZONTAL
 }

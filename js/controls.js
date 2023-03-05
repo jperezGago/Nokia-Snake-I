@@ -1,3 +1,5 @@
+import { DIRECTIONS } from './utils.js'
+
 export default class Controls {
   constructor () {
     this.keysCode = {
@@ -10,11 +12,6 @@ export default class Controls {
     }
   }
 
-  static controlDirections = {
-    left: Symbol('left'),
-    rigth: Symbol('rigth')
-  }
-
   setStartControl (startGame) {
     window.addEventListener('keydown', (event) => {
       if (event.keyCode === this.keysCode.enter) startGame()
@@ -22,9 +19,16 @@ export default class Controls {
   }
 
   setSnakeControls (snakeSetDirection) {
+    const keysCodeToDiretion = {
+      [this.keysCode.up]: DIRECTIONS.NORTH,
+      [this.keysCode.down]: DIRECTIONS.SOUTH,
+      [this.keysCode.left]: DIRECTIONS.WEST,
+      [this.keysCode.right]: DIRECTIONS.EAST
+    }
+
     window.addEventListener('keydown', (event) => {
-      if (event.keyCode === this.keysCode.left) snakeSetDirection(Controls.controlDirections.left)
-      if (event.keyCode === this.keysCode.right) snakeSetDirection(Controls.controlDirections.rigth)
+      const direction = keysCodeToDiretion[event.keyCode]
+      snakeSetDirection(direction)
     })
   }
 }

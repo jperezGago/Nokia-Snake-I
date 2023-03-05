@@ -50,7 +50,7 @@ export default class Game {
 
   startGame () {
     this.isRunning = true
-    this.controls.setSnakeControls(this.snake.setDirection.bind(this.snake))
+    this.controls.setSnakeControls(this.snake.setControlDirection.bind(this.snake))
   }
 
   stopGame () {
