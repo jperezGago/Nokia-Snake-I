@@ -26,7 +26,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .container {
@@ -36,10 +36,35 @@ body {
 
 .screen {
   background-color: rgb(178, 227, 42);
-  margin-top: 230px; 
+  margin-top: 230px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.menu {
+  height: 90%;
+  width: 90%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.menu-instructions {
+  font-size: 14px;
+  position: absolute;
+  bottom: 15px;
+}
+
+.menu-snake {
+  background-color: black;
+  color: rgb(178, 227, 42);
+  border-radius: 4px;
+  padding: 5px 0;
+  width: 85%;
+  font-size: 22px;
 }
 
 .score {
@@ -50,29 +75,26 @@ canvas {
   border: 2px solid black;
 }
 
-.menu {
-  height: 100%;
-  width: 100%;
-  position: relative;
+.finish-game {
+  height: 90%;
+  width: 90%;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+  flex-direction: column;
+  position: relative;
 }
 
-.menu-instructions {
-  font-size: 16px;
+.finish-game-congrats {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.finish-game-instructions {
+  font-size: 14px;
   position: absolute;
-  top: 20px;
-}
-
-.menu-snake {
-  background-color: black;
-  color: rgb(178, 227, 42);
-  border-radius: 4px;
-  padding: 5px 0;
-  width: 85%;
-  font-size: 22px;
+  bottom: 15px;
 }
 
 .nokia {

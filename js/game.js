@@ -53,11 +53,16 @@ export default class Game {
     this.controls.setSnakeControls(this.snake.setControlDirection.bind(this.snake))
   }
 
-  stopGame () {
+  stopGame ({ winner }) {
+    const message = winner
+      ? 'Enhorabuena! Has completado el juego'
+      : `Lo siento has perdido! 
+      Has conseguido ${this.score} ${this.score === 1 ? 'punto' : 'puntos'}`
+
     this.isRunning = false
+    this.display.drawFinishGame(message)
     this.resetScore()
     this.snake.reset()
-    this.display.drawMenu()
   }
 
   resetScore () {
@@ -94,7 +99,7 @@ export default class Game {
     if (!this.isRunning) return
 
     if (this.snake.collision) {
-      this.stopGame()
+      this.stopGame({ winner: false })
       return
     }
 
@@ -110,9 +115,7 @@ export default class Game {
     const emptyPath = this.getEmptySnakePath()
 
     if (!emptyPath.length) {
-      console.log('HAS GANADO!')
-      // TODO: Crear un mensaje de éxito
-      this.stopGame()
+      this.stopGame({ winner: true })
       return
     }
 
