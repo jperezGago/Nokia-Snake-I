@@ -3,6 +3,7 @@ import Snake from './snake.js'
 import Food from './food.js'
 import Display from './display.js'
 import Controls from './controls.js'
+import Score from './score.js'
 import { areBoxesInCollisions, getRandom } from './utils.js'
 
 export default class Game {
@@ -19,6 +20,7 @@ export default class Game {
     const display = new Display()
     const canvas = new Canvas(BORDER_MARGIN_CANVAS)
     const food = new Food(canvas, SHORT_LENGTH)
+    const score = new Score()
     const snake = new Snake({
       food,
       velocity: VELOCITY,
@@ -36,7 +38,7 @@ export default class Game {
     this.food = food
     this.canvas = canvas
     this.gameId = null
-    this.score = 0
+    this.score = score
     this.isRunning = false
   }
 
@@ -52,22 +54,12 @@ export default class Game {
       ? `CONGRATULATIONS!
       You have completed the game`
       : `GAME OVER! 
-      Score: ${this.score}`
+      Score: ${this.score.value}`
 
     this.isRunning = false
     this.display.drawFinishGame(message)
-    this.resetScore()
+    this.score.reset()
     this.snake.reset()
-  }
-
-  resetScore () {
-    this.score = 0
-    this.display.drawScore(0)
-  }
-
-  addScore () {
-    this.score += 1
-    this.display.drawScore(this.score)
   }
 
   getEmptySnakePath () {
@@ -106,7 +98,7 @@ export default class Game {
       return
     }
 
-    this.addScore()
+    this.score.add()
     const emptyPath = this.getEmptySnakePath()
 
     if (!emptyPath.length) {

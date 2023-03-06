@@ -5,11 +5,6 @@ export default class Display {
     this.finishGameNode = document.querySelector('.finish-game')
   }
 
-  drawScore (score) {
-    const scoreNode = document.querySelector('.score')
-    scoreNode.innerText = score <= 9 ? `0${score}` : score
-  }
-
   drawMenu () {
     this.menuNode.style.display = 'flex'
     this.inGameNode.style.display = 'none'
