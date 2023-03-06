@@ -15,6 +15,7 @@ Use key arrows: ⬅️ ⬆️ ⬇️ ➡️
 
 ## Last steps 🪜
 
+- Velocity selector
 - Mobile version 📱
 
 Enjoy 🥳
