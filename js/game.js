@@ -15,17 +15,9 @@ export default class Game {
     const stepLength = SHORT_LENGTH + SNAKE_MARGIN
     const minimalSnakeLength = stepLength + SHORT_LENGTH
     const initialSnakeLength = minimalSnakeLength + stepLength * 5
-    const canvasWidth = initialSnakeLength + stepLength * 10 + BORDER_MARGIN_CANVAS * 2
-    const canvasHeight = initialSnakeLength + stepLength * 3 + BORDER_MARGIN_CANVAS * 2
-    const screenWidth = canvasWidth + 40
-    const screenHeight = canvasHeight + 58
 
-    const display = new Display(screenWidth, screenHeight)
-    const canvas = new Canvas({
-      width: canvasWidth,
-      height: canvasHeight,
-      borderMargin: BORDER_MARGIN_CANVAS
-    })
+    const display = new Display()
+    const canvas = new Canvas(BORDER_MARGIN_CANVAS)
     const food = new Food(canvas, SHORT_LENGTH)
     const snake = new Snake({
       food,
@@ -50,7 +42,9 @@ export default class Game {
 
   startGame () {
     this.isRunning = true
-    this.controls.setSnakeControls(this.snake.setControlDirection.bind(this.snake))
+    this.controls.setSnakeControls(
+      this.snake.setControlDirection.bind(this.snake)
+    )
   }
 
   stopGame ({ winner }) {

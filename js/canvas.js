@@ -1,13 +1,11 @@
 export default class Canvas {
-  constructor ({ width, height, borderMargin }) {
+  constructor (borderMargin) {
     const ctx = document.querySelector('canvas').getContext('2d')
-    ctx.canvas.width = width
-    ctx.canvas.height = height
 
-    this.ctx = ctx
-    this.width = width
-    this.height = height
+    this.width = ctx.canvas.width
+    this.height = ctx.canvas.height
     this.borderMargin = borderMargin
+    this.ctx = ctx
   }
 
   drawRectangule ({ x, y, width, height, fill = true, color = 'black' }) {
