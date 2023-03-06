@@ -9,7 +9,7 @@ import { areBoxesInCollisions, getRandom } from './utils.js'
 export default class Game {
   constructor () {
     const BORDER_MARGIN_CANVAS = 3
-    const VELOCITY = 5
+    const VELOCITY = 10
     const SHORT_LENGTH = 10
     const SNAKE_MARGIN = 2
 
